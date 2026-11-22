@@ -12,9 +12,11 @@ import {
 } from "lucide-react";
 import { makeResult, modes, products, shortcuts, windows } from "./study-tools";
 import type { Product, Result, TimeWindow, Tool } from "./study-tools";
+import { DesktopExample, DesktopLibrary } from "./DesktopWorkspace";
+import type { LibraryItem, StudyEntry } from "./DesktopWorkspace";
 import "./App.css";
+import "./desktop.css";
 
-type Entry = { prompt: string; label: string; result: Result };
 type Readiness = {
   covered: number;
   topics: number;
@@ -297,16 +299,45 @@ function readinessEstimate(data: Readiness) {
   };
 }
 
+const bookmarkKey = "ingenium.bookmarks.v1";
+
+function loadBookmarks(): LibraryItem[] {
+  try {
+    const data: unknown = JSON.parse(localStorage.getItem(bookmarkKey) ?? "[]");
+    if (!Array.isArray(data)) return [];
+    return data.filter((item) => {
+      const result = item?.entry?.result;
+      return (
+        typeof item?.id === "string" &&
+        typeof item.entry?.prompt === "string" &&
+        typeof item.entry?.label === "string" &&
+        typeof result?.title === "string" &&
+        ["map", "list", "quiz", "flash"].includes(result.kind) &&
+        Array.isArray(result.items) &&
+        result.items.length > 0 &&
+        result.items.every((line: unknown) => typeof line === "string") &&
+        (result.duration === undefined || Number.isFinite(result.duration))
+      );
+    });
+  } catch {
+    return [];
+  }
+}
+
 function App() {
   const [product, setProduct] = useState<Product>(products[0]);
   const [tool, setTool] = useState<Tool | null>(null);
   const [menu, setMenu] = useState<"all" | "products" | null>(null);
   const [text, setText] = useState("");
-  const [entries, setEntries] = useState<Entry[]>([]);
+  const [entries, setEntries] = useState<StudyEntry[]>([]);
   const [attachment, setAttachment] = useState<{
     name: string;
     text: string;
   } | null>(null);
+  const [recent, setRecent] = useState<LibraryItem[]>([]);
+  const [saved, setSaved] = useState<LibraryItem[]>(loadBookmarks);
+  const [savedOnly, setSavedOnly] = useState(false);
+  const [activityVersion, setActivityVersion] = useState(0);
   const [notice, setNotice] = useState("");
   const [time, setTime] = useState<TimeWindow>("30 minutes");
   const [showReadiness, setShowReadiness] = useState(false);
@@ -368,18 +399,38 @@ function App() {
       .join("\n");
     if (!prompt) return;
     fileVersion.current += 1;
-    setEntries((previous) => [
-      ...previous,
-      {
-        prompt: text.trim() || attachment?.name || prompt,
-        label: active.name,
-        result: makeResult(prompt, product, tool, time),
-      },
-    ]);
+    const entry: StudyEntry = {
+      prompt: text.trim() || attachment?.name || prompt,
+      label: active.name,
+      result: makeResult(prompt, product, tool, time),
+    };
+    setEntries((previous) => [...previous, entry]);
+    const item = { id: crypto.randomUUID(), entry };
+    setRecent((previous) => [item, ...previous]);
     setText("");
     setAttachment(null);
     setNotice("");
     closeMenu();
+  }
+
+  function openSet(item: LibraryItem) {
+    reset();
+    setEntries([item.entry]);
+    setActivityVersion((version) => version + 1);
+  }
+
+  function toggleBookmark(item: LibraryItem) {
+    const next = saved.some((bookmark) => bookmark.id === item.id)
+      ? saved.filter((bookmark) => bookmark.id !== item.id)
+      : [item, ...saved];
+    setSaved(next);
+    try {
+      localStorage.setItem(bookmarkKey, JSON.stringify(next));
+    } catch {
+      setNotice(
+        "Browser storage is unavailable. Bookmarks will last for this session.",
+      );
+    }
   }
 
   async function attach(source: File) {
@@ -421,6 +472,16 @@ function App() {
     >
       <div className="ambient ambient-one" />
       <div className="ambient ambient-two" />
+      <DesktopLibrary
+        recent={recent}
+        saved={saved}
+        savedOnly={savedOnly}
+        onFilter={setSavedOnly}
+        onOpen={openSet}
+        onSave={toggleBookmark}
+        onNew={reset}
+        onReadiness={() => setShowReadiness(true)}
+      />
       <div className="app-shell">
         <header className="topbar">
           <button
@@ -473,28 +534,7 @@ function App() {
                 </div>
               </section>
               <div className="divider" />
-              <section className="cards" aria-label="Quick study tools">
-                {shortcuts.map((item) => (
-                  <button
-                    type="button"
-                    className={`card ${item.color}`}
-                    key={item.id}
-                    onClick={() => chooseTool(item)}
-                  >
-                    <span className="card-art" aria-hidden="true">
-                      <item.icon size={47} strokeWidth={1.35} />
-                    </span>
-                    <span className="card-label">
-                      <span>
-                        {item.name}
-                        {item.id === "readiness" && estimate && (
-                          <small>{estimate.score}% estimate</small>
-                        )}
-                      </span>
-                    </span>
-                  </button>
-                ))}
-              </section>
+              <DesktopExample onStart={openSet} />
             </div>
           ) : (
             <div className="conversation" aria-label="Study session">
@@ -506,7 +546,10 @@ function App() {
                 <ArrowLeft size={16} /> Back to study tools
               </button>
               {entries.map((entry, index) => (
-                <section className="exchange" key={index}>
+                <section
+                  className="exchange"
+                  key={`${activityVersion}-${index}`}
+                >
                   <div className="user-message">{entry.prompt}</div>
                   <div className="result-label">
                     <img src="/aafreen-studypilot.webp" alt="" />
@@ -519,6 +562,31 @@ function App() {
               <div ref={bottom} />
             </div>
           )}
+          <section
+            className={`cards ${entries.length ? "in-conversation" : ""}`}
+            aria-label="Quick study tools"
+          >
+            {shortcuts.map((item) => (
+              <button
+                type="button"
+                className={`card ${item.color}`}
+                key={item.id}
+                onClick={() => chooseTool(item)}
+              >
+                <span className="card-art" aria-hidden="true">
+                  <item.icon size={47} strokeWidth={1.35} />
+                </span>
+                <span className="card-label">
+                  <span>
+                    {item.name}
+                    {item.id === "readiness" && estimate && (
+                      <small>{estimate.score}% estimate</small>
+                    )}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </section>
         </main>
 
         <div className="composer-dock">

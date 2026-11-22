@@ -86,3 +86,32 @@ test("flashcards reveal answers and readiness reports uncertainty", async ({
     page.getByRole("button", { name: /Exam readiness/ }),
   ).toContainText("65% estimate");
 });
+
+test("laptop library opens practice and retains bookmarked results", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Start practice", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Reveal answer" }).click();
+  await expect(page.locator(".practice-card")).toContainText(
+    "Chlorophyll absorbs",
+  );
+  await page.getByRole("button", { name: "New study chat" }).click();
+  await page
+    .getByRole("button", { name: "Generate visualization", exact: true })
+    .click();
+  await page.getByRole("textbox").fill("Cell structure\nMembrane\nNucleus");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await page
+    .getByRole("button", { name: "Bookmark Cell structure", exact: true })
+    .click();
+  await page.reload();
+  await page.getByRole("button", { name: "Show bookmarks" }).click();
+  await page
+    .getByRole("button", { name: "Open Cell structure", exact: true })
+    .click();
+  await expect(page.locator(".diagram")).toContainText("Nucleus");
+});
