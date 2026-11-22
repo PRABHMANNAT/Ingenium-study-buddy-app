@@ -574,7 +574,13 @@ function App() {
                 onClick={() => chooseTool(item)}
               >
                 <span className="card-art" aria-hidden="true">
-                  <item.icon size={47} strokeWidth={1.35} />
+                  <img
+                    src={`/study-icons/${item.id}.webp`}
+                    alt=""
+                    width="288"
+                    height="288"
+                    draggable={false}
+                  />
                 </span>
                 <span className="card-label">
                   <span>

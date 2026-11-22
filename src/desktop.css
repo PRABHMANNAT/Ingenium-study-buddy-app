@@ -14,8 +14,8 @@
     min-height: 0;
     padding: clamp(14px, 2.2vw, 38px);
     background:
-      radial-gradient(ellipse at 4% 0%, #eae5f2, transparent 55%),
-      linear-gradient(120deg, #f3f0f5, #edeee7 59%, #f4e9f0);
+      radial-gradient(ellipse at 4% 0%, #bcd7f7, transparent 64%),
+      linear-gradient(120deg, #dbe9fa, #e9eff6 58%, #f8e8d5);
     overflow: hidden;
   }
   .page > .ambient {
@@ -40,7 +40,7 @@
   .rail-brand {
     width: 40px;
     height: 40px;
-    background: #334c40;
+    background: #254779;
     color: #fff;
     border-radius: 14px;
   }
@@ -62,9 +62,9 @@
   }
   .rail-controls button:hover,
   .rail-controls button[aria-pressed="true"] {
-    color: #325442;
-    background: #dce7dd;
-    border-color: #c4d6c7;
+    color: #2a5386;
+    background: #dce9f9;
+    border-color: #c3d5ea;
   }
   .rail-avatar {
     display: block;
@@ -215,7 +215,7 @@
     min-width: 0;
     min-height: 0;
     padding: 0 clamp(24px, 3vw, 60px) 14px;
-    background: linear-gradient(157deg, #f8f6fc 3%, #f8faf4 55%, #f8eff2 100%);
+    background: linear-gradient(152deg, #f4f8ff 0%, #fffaf1 74%, #fff1df 100%);
     border-radius: 30px;
     box-shadow: 0 5px 25px #54435709;
   }
@@ -270,7 +270,7 @@
     gap: 16px;
     border-radius: 23px;
     border: 1px solid #fff;
-    background: linear-gradient(120deg, #fff9, #ebeee8af);
+    background: linear-gradient(118deg, #eef4ff, #d8e8fd 72%, #e5effa);
     padding: clamp(18px, 2.2vw, 32px);
   }
   .example-caption {
@@ -292,7 +292,7 @@
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    background: #385546;
+    background: #254779;
     color: white;
     border: none;
     border-radius: 20px;
@@ -300,7 +300,7 @@
     font-size: 0.8rem;
   }
   .example-brief button:hover {
-    background: #253d30;
+    background: #18365c;
   }
   .paper-preview {
     width: clamp(125px, 15vw, 217px);
@@ -395,7 +395,7 @@
     flex-shrink: 0;
   }
   .card {
-    height: clamp(93px, 15vh, 146px);
+    height: clamp(104px, 17vh, 165px);
     min-height: 0;
     border-radius: 17px;
     padding: 11px;
@@ -403,13 +403,8 @@
   .card-art {
     inset: 7px 0 36px;
   }
-  .card-art::before {
-    width: 54px;
-    height: 54px;
-  }
-  .card-art svg {
-    width: 29px;
-    height: 29px;
+  .card-art img {
+    width: min(82%, 120px);
   }
   .card-label {
     font-size: clamp(0.74rem, 1vw, 0.88rem);
