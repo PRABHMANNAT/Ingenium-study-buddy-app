@@ -24,11 +24,70 @@ type Readiness = {
   attempts: number;
 };
 
-function ToolIcon({ item }: { item: Product | Tool }) {
+function ToolIcon({
+  id,
+  color,
+}: {
+  id: Tool["id"] | Product["id"] | "attach";
+  color: string;
+}) {
   return (
-    <span className={`tool-icon ${item.color}`} aria-hidden="true">
-      <item.icon size={18} strokeWidth={1.75} />
+    <span className={`tool-icon ${color}`} aria-hidden="true">
+      <img
+        src={`/study-icons/${id}.webp`}
+        alt=""
+        width="40"
+        height="40"
+        draggable={false}
+      />
     </span>
+  );
+}
+
+function MenuOptions<T extends Tool | Product>({
+  items,
+  selected,
+  onChoose,
+  moreLabel,
+}: {
+  items: readonly T[];
+  selected?: string;
+  onChoose: (item: T) => void;
+  moreLabel: string;
+}) {
+  const secondary = items.slice(3);
+  function row(item: T) {
+    return (
+      <button
+        key={item.id}
+        type="button"
+        className="menu-row"
+        aria-pressed={item.id === selected}
+        onClick={() => onChoose(item)}
+      >
+        <ToolIcon id={item.id} color={item.color} />
+        <span>
+          <strong>{item.name}</strong>
+          <small>{item.description}</small>
+        </span>
+        {item.id === selected && <Check className="menu-check" size={17} />}
+      </button>
+    );
+  }
+  return (
+    <>
+      {items.slice(0, 3).map(row)}
+      <details
+        className="menu-more"
+        open={secondary.some((item) => item.id === selected)}
+      >
+        <summary>
+          {moreLabel}
+          <ChevronDown size={15} aria-hidden="true" />
+        </summary>
+        {secondary.map(row)}
+      </details>
+    </>
   );
 }
 
@@ -641,7 +700,7 @@ function App() {
                     Exam companions
                   </button>
                 </div>
-                <div className="menu-scroll">
+                <div className="menu-scroll" key={menu}>
                   {menu === "all" && (
                     <>
                       <button
@@ -652,55 +711,28 @@ function App() {
                           file.current?.click();
                         }}
                       >
-                        <span className="tool-icon neutral">
-                          <Paperclip size={18} />
-                        </span>
+                        <ToolIcon id="attach" color="neutral" />
                         <span>
                           <strong>Add study material</strong>
                           <small>Attach TXT, Markdown, or CSV</small>
                         </span>
                       </button>
-                      {modes.map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          className="menu-row"
-                          onClick={() => chooseTool(item)}
-                        >
-                          <ToolIcon item={item} />
-                          <span>
-                            <strong>{item.name}</strong>
-                            <small>{item.description}</small>
-                          </span>
-                          {tool?.id === item.id && (
-                            <Check className="menu-check" size={17} />
-                          )}
-                        </button>
-                      ))}
+                      <MenuOptions
+                        items={modes}
+                        selected={tool?.id}
+                        onChoose={chooseTool}
+                        moreLabel="More study modes"
+                      />
                     </>
                   )}
-                  {menu === "products" &&
-                    products.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className="menu-row"
-                        onClick={() => chooseProduct(item)}
-                      >
-                        <ToolIcon item={item} />
-                        <span>
-                          <strong>{item.name}</strong>
-                          <small>
-                            {menu === "products"
-                              ? item.detail
-                              : item.description}
-                          </small>
-                        </span>
-                        {product.id === item.id && (
-                          <Check className="menu-check" size={17} />
-                        )}
-                      </button>
-                    ))}
+                  {menu === "products" && (
+                    <MenuOptions
+                      items={products}
+                      selected={product.id}
+                      onChoose={chooseProduct}
+                      moreLabel="More exam companions"
+                    />
+                  )}
                 </div>
               </section>
             </>
@@ -798,7 +830,7 @@ function App() {
             </div>
             {(tool || product.id !== "pilot") && (
               <div className="mode-chip">
-                <ToolIcon item={active} />
+                <ToolIcon id={active.id} color={active.color} />
                 {active.name}
                 <button
                   type="button"

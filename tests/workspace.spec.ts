@@ -32,12 +32,17 @@ test("the mobile home keeps its layout and separates products from study modes",
   await expect(
     menu.getByRole("button", { name: "Exam companions" }),
   ).toBeVisible();
+  await expect(menu.locator(".menu-row:visible")).toHaveCount(4);
+  await expect(menu.getByRole("button", { name: /^Sparky/ })).toBeHidden();
+  await menu.getByText("More study modes").click();
   await expect(
     menu.getByRole("button", {
       name: /^(Study Plan|Sparky|Tutor Me|Live Lecture|Notes|Arcade)\b/,
     }),
   ).toHaveCount(6);
   await menu.getByRole("button", { name: "Exam companions" }).click();
+  await expect(menu.locator(".menu-row:visible")).toHaveCount(3);
+  await menu.getByText("More exam companions").click();
   await expect(
     menu.getByRole("button", {
       name: /^(ExamPilot AI|Cramazon Prime|PaperDNA|VivaVerse|MarkMyPaper|RevisionArena quizd)\b/,
