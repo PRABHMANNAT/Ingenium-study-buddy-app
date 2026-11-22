@@ -851,3 +851,198 @@
     transition-duration: 0.01ms !important;
   }
 }
+/* Refined study surfaces */
+.card {
+  min-height: 190px;
+  border: 1px solid #e5e9e5;
+  border-radius: 22px;
+  background: linear-gradient(155deg, #f2f5f1 0%, #e9efea 100%);
+  box-shadow: 0 1px 3px #2531260a;
+  padding: 16px;
+}
+.card:nth-child(2) {
+  background: linear-gradient(155deg, #f2f5f3, #e7efed);
+}
+.card:nth-child(3) {
+  background: linear-gradient(155deg, #f4f5f0, #ebeee6);
+}
+.card:nth-child(4) {
+  background: linear-gradient(155deg, #f4f3f0, #eeece6);
+}
+.card:hover {
+  border-color: #bfcbc3;
+  box-shadow: 0 7px 18px #263e3220;
+}
+.card-art {
+  inset: 16px 0 50px;
+  display: grid;
+  place-items: center;
+  color: #3f6758;
+}
+.card-art::before {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border: 1px solid #ffffffad;
+  border-radius: 50%;
+  background: #ffffff5e;
+}
+.card-art svg {
+  position: relative;
+  transition: transform 0.2s ease;
+}
+.card:hover .card-art svg {
+  transform: scale(1.08);
+}
+.card.pink .card-art {
+  color: #83596b;
+}
+.card.teal .card-art {
+  color: #3d756a;
+}
+.card.amber .card-art {
+  color: #826949;
+}
+.card-label {
+  align-items: flex-end;
+  font-size: 0.89rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.card-label small {
+  margin-top: 4px;
+  font-size: 0.72rem;
+}
+.tool-menu {
+  border: 1px solid #dfe4e0;
+  border-radius: 18px;
+  background: #fcfdfb;
+  box-shadow: 0 16px 40px #1c2b222e;
+}
+.menu-heading {
+  padding: 11px 13px 10px 18px;
+  background: #fcfdfb;
+  border-bottom: 1px solid #e9ece8;
+}
+.menu-heading h2 {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.96rem;
+  letter-spacing: -0.01em;
+}
+.menu-scroll {
+  padding: 9px;
+  scrollbar-color: #b9c7bd transparent;
+}
+.menu-scroll h3 {
+  margin: 17px 10px 6px;
+  color: #69756d;
+  font-size: 0.71rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.menu-scroll h3:not(:first-of-type) {
+  padding-top: 14px;
+  border-top: 1px solid #e9ece8;
+}
+.menu-row {
+  min-height: 58px;
+  padding: 8px 9px;
+  gap: 12px;
+  border-radius: 10px;
+}
+.menu-row:hover,
+.menu-row:focus-visible {
+  background: #edf2ee;
+}
+.menu-row strong {
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+.menu-row small {
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: #67736b;
+}
+.tool-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #496657;
+  background: #e9efe9;
+}
+.tool-icon.blue,
+.tool-icon.indigo {
+  color: #4e6277;
+  background: #e8edf1;
+}
+.tool-icon.pink,
+.tool-icon.violet {
+  color: #715a70;
+  background: #efe9ee;
+}
+.tool-icon.amber {
+  color: #796b4c;
+  background: #f1eee5;
+}
+.tool-icon.teal {
+  color: #426e68;
+  background: #e6efec;
+}
+.tool-icon.neutral {
+  color: #52665a;
+  background: #ebf0eb;
+}
+.menu-check {
+  color: #3e6752;
+}
+.mode-chip .tool-icon {
+  width: 23px;
+  height: 23px;
+  border-radius: 6px;
+}
+.mode-chip .tool-icon svg {
+  width: 14px;
+  height: 14px;
+}
+@media (max-height: 780px) {
+  .card {
+    min-height: 155px;
+  }
+  .card-art::before {
+    width: 74px;
+    height: 74px;
+  }
+}
+.menu-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin: 10px 12px 4px;
+  padding: 4px;
+  border-radius: 11px;
+  background: #eef1ed;
+}
+.menu-tabs button {
+  min-height: 34px;
+  padding: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #647067;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.menu-tabs button.active {
+  background: #fff;
+  color: #233a2c;
+  box-shadow: 0 1px 4px #26362a1c;
+}
+.menu-tabs button:hover:not(.active) {
+  color: #26382d;
+}
+.tool-menu {
+  max-height: min(570px, calc(100dvh - 136px));
+}

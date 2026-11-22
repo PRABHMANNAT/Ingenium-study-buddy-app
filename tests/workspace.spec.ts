@@ -28,22 +28,22 @@ test("the mobile home keeps its layout and separates products from study modes",
   const trigger = page.getByRole("button", { name: "Open study tools" });
   await trigger.click();
   const menu = page.getByRole("region", { name: "Study tools" });
+  await expect(menu.getByRole("button", { name: "Study modes" })).toBeVisible();
   await expect(
-    menu.getByRole("heading", { name: "Study modes" }),
-  ).toBeVisible();
-  await expect(
-    menu.getByRole("heading", { name: "Exam companions" }),
+    menu.getByRole("button", { name: "Exam companions" }),
   ).toBeVisible();
   await expect(
     menu.getByRole("button", {
       name: /^(Study Plan|Sparky|Tutor Me|Live Lecture|Notes|Arcade)\b/,
     }),
   ).toHaveCount(6);
+  await menu.getByRole("button", { name: "Exam companions" }).click();
   await expect(
     menu.getByRole("button", {
       name: /^(ExamPilot AI|Cramazon Prime|PaperDNA|VivaVerse|MarkMyPaper|RevisionArena quizd)\b/,
     }),
   ).toHaveCount(6);
+  await menu.getByRole("button", { name: "Study modes" }).click();
   await page.keyboard.press("Escape");
   await expect(trigger).toBeFocused();
   await trigger.click();

@@ -482,14 +482,9 @@ function App() {
                     onClick={() => chooseTool(item)}
                   >
                     <span className="card-art" aria-hidden="true">
-                      <span className="art-shadow" />
-                      <span className="art-tile">
-                        <item.icon size={39} strokeWidth={1.6} />
-                      </span>
-                      <span className="art-spark">✦</span>
+                      <item.icon size={47} strokeWidth={1.35} />
                     </span>
                     <span className="card-label">
-                      <ToolIcon item={item} />
                       <span>
                         {item.name}
                         {item.id === "readiness" && estimate && (
@@ -539,11 +534,11 @@ function App() {
               <section
                 className="tool-menu"
                 id="study-menu"
-                aria-label={menu === "all" ? "Study tools" : "Exam products"}
+                aria-label="Study tools"
               >
                 <div className="menu-heading">
                   <h2 ref={menuHeading} tabIndex={-1}>
-                    {menu === "all" ? "Study tools" : "Exam products"}
+                    Study tools
                   </h2>
                   <button
                     type="button"
@@ -552,6 +547,24 @@ function App() {
                     onClick={() => closeMenu(true)}
                   >
                     <X size={18} />
+                  </button>
+                </div>
+                <div className="menu-tabs" aria-label="Tool categories">
+                  <button
+                    type="button"
+                    className={menu === "all" ? "active" : ""}
+                    aria-pressed={menu === "all"}
+                    onClick={() => setMenu("all")}
+                  >
+                    Study modes
+                  </button>
+                  <button
+                    type="button"
+                    className={menu === "products" ? "active" : ""}
+                    aria-pressed={menu === "products"}
+                    onClick={() => setMenu("products")}
+                  >
+                    Exam companions
                   </button>
                 </div>
                 <div className="menu-scroll">
@@ -573,7 +586,6 @@ function App() {
                           <small>Attach TXT, Markdown, or CSV</small>
                         </span>
                       </button>
-                      <h3>Study modes</h3>
                       {modes.map((item) => (
                         <button
                           key={item.id}
@@ -581,12 +593,7 @@ function App() {
                           className="menu-row"
                           onClick={() => chooseTool(item)}
                         >
-                          <span
-                            className={`tool-icon ${item.color}`}
-                            aria-hidden="true"
-                          >
-                            <span className="mode-emoji">{item.emoji}</span>
-                          </span>
+                          <ToolIcon item={item} />
                           <span>
                             <strong>{item.name}</strong>
                             <small>{item.description}</small>
@@ -598,26 +605,28 @@ function App() {
                       ))}
                     </>
                   )}
-                  <h3>Exam companions</h3>
-                  {products.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className="menu-row"
-                      onClick={() => chooseProduct(item)}
-                    >
-                      <ToolIcon item={item} />
-                      <span>
-                        <strong>{item.name}</strong>
-                        <small>
-                          {menu === "products" ? item.detail : item.description}
-                        </small>
-                      </span>
-                      {product.id === item.id && (
-                        <Check className="menu-check" size={17} />
-                      )}
-                    </button>
-                  ))}
+                  {menu === "products" &&
+                    products.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className="menu-row"
+                        onClick={() => chooseProduct(item)}
+                      >
+                        <ToolIcon item={item} />
+                        <span>
+                          <strong>{item.name}</strong>
+                          <small>
+                            {menu === "products"
+                              ? item.detail
+                              : item.description}
+                          </small>
+                        </span>
+                        {product.id === item.id && (
+                          <Check className="menu-check" size={17} />
+                        )}
+                      </button>
+                    ))}
                 </div>
               </section>
             </>
@@ -715,7 +724,7 @@ function App() {
             </div>
             {(tool || product.id !== "pilot") && (
               <div className="mode-chip">
-                <span aria-hidden="true">{active.emoji}</span>
+                <ToolIcon item={active} />
                 {active.name}
                 <button
                   type="button"
